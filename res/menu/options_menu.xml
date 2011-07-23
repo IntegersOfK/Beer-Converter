@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	
+	<item android:id="@+id/select_imperial" android:icon="@drawable/ic_menu_foot"
+		android:title="@string/imperial_units" android:showAsAction="ifRoom|withText" />
+	<item android:id="@+id/select_metric" android:icon="@drawable/ic_menu_ruler"
+		android:title="@string/metric_units" android:showAsAction="ifRoom|withText" />
+	<item android:id="@+id/add_unit" android:title="@string/add_unit" android:showAsAction="ifRoom|withText" android:icon="@drawable/ic_menu_add"/>
+	<item android:id="@+id/clear_units" android:title="@string/clear_units" android:showAsAction="ifRoom|withText" android:icon="@drawable/ic_menu_delete"></item>
+	
+	
+
+</menu>
+

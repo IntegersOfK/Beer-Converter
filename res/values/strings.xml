@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">Beer Converter</string>
+	<string name="select_prompt">Select a unit</string>
+	<string name="imperial_units">Imperial Units</string>
+	<string name="metric_units">Metric Units</string>
+	<string name="add_unit">Add Custom Unit</string>
+	<string name="clear_units">Clear Custom Units</string>
+	
+	
+
+</resources>
