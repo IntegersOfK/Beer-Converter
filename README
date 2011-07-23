@@ -1,1 +1,35 @@
-This is the Beer Converter read me. Just setting up github for the first time.
+Download the app: https://market.android.com/details?id=ca.ajwest.BeerConverter
+Written by: AJ West - http://blog.ajwest.ca
+
+Market Description:
+
+This simple application helps you convert between beer units, such as Bottles, Pints, Cans, etc. It also lets to know how much alcohol you're drinking (the amount of ethanol contained in your beer).
+
+Example calculation: I want to know how many 5% bottles of beer it would take to equal the alcohol in 2 pints of 6% beer.
+I would input:
+
+2 Pints 6%
+to
+Bottles 5%
+
+You can add your own units from the menu!
+
+Full changelog at: http://goo.gl/jWGJC
+
+
+
+<Beer Converter is an Android app that converts different units and their relative alcohol content.>
+    Copyright (C) <2011>  <Adam James West> ajwest@gmail.com
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
