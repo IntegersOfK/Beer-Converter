@@ -29,24 +29,27 @@ import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -58,6 +61,15 @@ import android.widget.AdapterView.OnItemSelectedListener;
 
 
 public class BeerConverter extends Activity {
+	
+	
+	//inapp billing:
+private static final String TAG = "BillingService";
+	
+	private Context mContext;
+//	private ImageView purchaseableItem;  //this was to make a photo appear after the inapp purchase, but we're only using it to donate.
+	private Button purchaseButton;
+	
 
 	ArrayAdapter<CharSequence> adapter1, adapter2;
 	Spinner spinner01, spinner02;
@@ -128,6 +140,20 @@ public class BeerConverter extends Activity {
 
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+		
+		//inapp billing:
+		Log.i("BillingService", "Starting");
+        setContentView(R.layout.main);
+         
+        mContext = this;
+        
+//this was to make a photo appear as the "purchased item" in the app, but since we're only using the inapp billing to donate, we don't need it.
+//        purchaseableItem = (ImageView) findViewById(R.id.main_purchase_item);
+        
+        startService(new Intent(mContext, BillingService.class));
+        BillingHelper.setCompletedHandler(mTransactionHandler);
+        //end inapp billing
+		
 
 		spinner01 = (Spinner) findViewById(R.id.Spinner01);
 		spinner02 = (Spinner) findViewById(R.id.Spinner02);
@@ -171,7 +197,6 @@ public class BeerConverter extends Activity {
 		}
 
 
-
 		//add our default units to the nameList and valueList.
 		nameList.add("Pint");
 		nameList.add("20 oz Glass");
@@ -179,26 +204,26 @@ public class BeerConverter extends Activity {
 		nameList.add("Bottle");
 		nameList.add("Can");
 		nameList.add("Tallboy Can");
-		nameList.add("Mini-Pitcher");
 		nameList.add("Red Dixie Cup");
 		nameList.add("Shot");
-		nameList.add("Mega Mug");
+		nameList.add("Mega Mug/Quart");
 		nameList.add("King Can");
-		nameList.add("Jumbo King Can");
+		nameList.add("Mini-Pitcher/Jumbo King Can");
+		nameList.add("Litre");
 
-		valueList.add("473.176473");
-		valueList.add("592");
-		valueList.add("1774");
-		valueList.add("341");
-		valueList.add("355");
-		valueList.add("473");
-		valueList.add("950");
-		valueList.add("500");
-		valueList.add("44");
-		valueList.add("946.35");
-		valueList.add("750");
-		valueList.add("950");
-
+		valueList.add("473.176473");	//Pint
+		valueList.add("591.470591");	//20 oz Glass
+		valueList.add("1774.41177");	//Pitcher
+		valueList.add("341");			//Bottle
+		valueList.add("355");			//Can
+		valueList.add("473");			//Tallboy Can
+		valueList.add("500");			//Red Dixie Cup
+		valueList.add("44.3602943");	//Shot
+		valueList.add("946.352946");	//Mega Mug/Quart
+		valueList.add("750");			//King Can
+		valueList.add("950");			//Mini-Pitcher/Jumbo King Can
+		valueList.add("1000");			//Litre
+		
 		defaultListLength = nameList.size(); //so that later we know if custom units have been added.
 
 
@@ -213,13 +238,6 @@ public class BeerConverter extends Activity {
 		} catch (IOException e) {
 			e.printStackTrace();
 
-			/** for programming, so that I could tell when the loop was broken.
-				Context context = getApplicationContext();
-				CharSequence text = "If there were custom units, they were just added to the list.";
-				int duration = Toast.LENGTH_SHORT;
-				Toast toast = Toast.makeText(context, text, duration);
-				toast.show();	
-			 **/
 		}
 
 
@@ -481,11 +499,52 @@ public class BeerConverter extends Activity {
 		case R.id.clear_units:
 			clearUnitsSelected();
 			return true;
+		case R.id.donate:
+			donateSelected();
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
 
+
+	private void donateSelected() {
+		
+			if(BillingHelper.isBillingSupported()){
+				BillingHelper.requestPurchase(mContext, "donation.item"); //the name of the in-app item 
+	        } else {
+	        	Log.i(TAG,"Can't purchase on this device");
+	        	purchaseButton.setEnabled(false); //  press button before service started will disable when it shouldnt
+	        }
+		}
+		
+	
+	 public Handler mTransactionHandler = new Handler(){
+ 		public void handleMessage(android.os.Message msg) {
+ 			Log.i(TAG, "Transaction complete");
+ 			Log.i(TAG, "Transaction status: "+BillingHelper.latestPurchase.purchaseState);
+ 			Log.i(TAG, "Item purchased is: "+BillingHelper.latestPurchase.productId);
+ 			
+ 			if(BillingHelper.latestPurchase.isPurchased()){
+ 			//	showItem();  //This was to show the in app purchase, but we're only using it to donate.
+ 				//This would be the spot to make stuff happen after a purchase though.
+ 			}
+ 		};
+ 	
+ };
+	
+ /**  //This was to make a photo of an "in app purchase" visible, but we're only using inapp billing for donations.
+	private void showItem() {
+		purchaseableItem.setVisibility(View.VISIBLE);
+	}
+**/
+	
+	
+	@Override
+	protected void onDestroy() {
+		BillingHelper.stopService();
+		super.onDestroy();
+	}
+		
 
 	private void clearUnitsSelected() {
 
@@ -601,9 +660,8 @@ public class BeerConverter extends Activity {
 		//after the alert dialog box was created. So here's where the initial "spinner" style dialog alert box is called.
 		AlertDialog alert = builder.create();
 		alert.show();
+		}
 	}
-	}
-
 
 
 	String addCustomUnitName;
@@ -645,8 +703,6 @@ public class BeerConverter extends Activity {
 
 	double impValue, metValue;
 	public void addUnitSelected2(){ //this is the second method to get the unit value.
-
-		//start attempt2
 
 		final Dialog customUnitAddDialog2 = new Dialog(this);
 		customUnitAddDialog2.setContentView(R.layout.textentryalertdialog);
@@ -733,9 +789,6 @@ public class BeerConverter extends Activity {
 		});
 		customUnitAddDialog2.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 		customUnitAddDialog2.show();
-
-		//end attempt2
-
 
 	}
 
