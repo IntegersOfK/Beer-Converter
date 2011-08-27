@@ -44,6 +44,7 @@ public class BillingService extends Service implements ServiceConnection{
 	public IBinder onBind(Intent intent) {
 		return null;
 	}
+	
 
 	public void onServiceConnected(ComponentName name, IBinder service) {
 		Log.i(TAG, "Market Billing Service Connected.");

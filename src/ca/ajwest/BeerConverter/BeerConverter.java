@@ -37,8 +37,10 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -60,15 +62,23 @@ import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 
 
-public class BeerConverter extends Activity {
+public class BeerConverter extends Activity implements
+ColorPickerDialog.OnColorChangedListener {
 	
+	//colorpickerdialog
+    private static final String COLOR_PREFERENCE_KEY = "color";
+    boolean firstTimeSet = true;
 	
 	//inapp billing:
-private static final String TAG = "BillingService";
-	
+    private static final String TAG = "BillingService";
+    private static final String LOGS = "BeerConverterService";
+    public static boolean backgroundColorsPurchased;
+    private static String BACKGROUND_COLORS_PURCHASED = "bgcolorspurchased";
+    public final static boolean DEFAULT_PURCHASESATE = false; //for shared prefs, the user didn't buy it by default.
+    public static boolean prefsAlreadyExist;
+    static String PREFS_ALREADY_EXIST = "prefsalreadyexisit";
+    public final static boolean DEFAULT_CHECKSTATE = false;
 	private Context mContext;
-//	private ImageView purchaseableItem;  //this was to make a photo appear after the inapp purchase, but we're only using it to donate.
-	private Button purchaseButton;
 	
 
 	ArrayAdapter<CharSequence> adapter1, adapter2;
@@ -80,8 +90,6 @@ private static final String TAG = "BillingService";
 
 	//have to initialise the string array with the value of the units in it.
 	TextView resultText01, resultText02;
-	String metricUnitsArray[] = {"Pint - 473 ml", "20 oz Glass - 592 ml", "Pitcher - 1774 ml", "Bottle - 341 ml", "Can - 355 ml", "Tallboy Can - 473 ml", "Mini-Pitcher - 950 ml", "Red Dixie Cup - 500 ml", "Shot - 44 ml", "Mega Mug (Schooner) - 946 ml", "King Can - 750 ml", "Jumbo King Can - 950 ml"};
-	String imperialUnitsArray[] = {"Pint - 16 oz", "20 oz Glass", "Pitcher - 60 oz", "Bottle - 11.5 oz", "Can - 12 oz", "Tallboy Can - 16 oz/1 Pint", "Mini-Pitcher - 32 oz/2 Pints", "Red Dixie Cup - 16.9 oz", "Shot - 1.5 oz", "Mega Mug (Schooner) - 32 oz/2 Pints", "King Can - 25 oz", "Jumbo King Can - 32 oz/2 Pints"};
 	//the lists being declared. We're going to add the units from the namesArray and valuesArray onCreate();
 	List<String> valueList = new ArrayList<String>();
 	List<String> nameList = new ArrayList<String>();
@@ -137,9 +145,19 @@ private static final String TAG = "BillingService";
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 
-
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
+
+		//If user has changed color before, this will set the background back to that color. If not, it'll set the default color background as black.
+		int defaultColor = PreferenceManager.getDefaultSharedPreferences(
+                BeerConverter.this).getInt(COLOR_PREFERENCE_KEY,
+                Color.BLACK);
+		colorChanged(defaultColor);
+		
+		//if user has already purchased the background colours in app item
+		backgroundColorsPurchased = PreferenceManager.getDefaultSharedPreferences(
+                BeerConverter.this).getBoolean(BACKGROUND_COLORS_PURCHASED,
+                false);
 		
 		//inapp billing:
 		Log.i("BillingService", "Starting");
@@ -147,11 +165,8 @@ private static final String TAG = "BillingService";
          
         mContext = this;
         
-//this was to make a photo appear as the "purchased item" in the app, but since we're only using the inapp billing to donate, we don't need it.
-//        purchaseableItem = (ImageView) findViewById(R.id.main_purchase_item);
-        
         startService(new Intent(mContext, BillingService.class));
-        BillingHelper.setCompletedHandler(mTransactionHandler);
+  //      BillingHelper.setCompletedHandler(mTransactionHandler);
         //end inapp billing
 		
 
@@ -163,6 +178,7 @@ private static final String TAG = "BillingService";
 		adapter1.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item); 
 
 		//we're going to see if the user has previously selected metric or imperial and then set the spinners accordingly.
+		Log.i(LOGS,"You're about to get a FileNotFoundException on purpose. It's because we're looping to check for files and the exception breaks the loop.");
 		try {
 			if (readFile("unitSelect").equals("metric")){
 				spinner01.setAdapter(adapter1); //for metric 
@@ -227,6 +243,7 @@ private static final String TAG = "BillingService";
 		defaultListLength = nameList.size(); //so that later we know if custom units have been added.
 
 
+		Log.i(LOGS, "About to loop to look for the name and value strings.");
 		try {
 			for (;;){ //forever loop. breaks when it can't read anymore files.
 				l++;	
@@ -236,8 +253,8 @@ private static final String TAG = "BillingService";
 				nameList.add(readFile(nName));
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
-
+			//e.printStackTrace();
+			Log.i(LOGS, "Catch caught. No more files to read. Carrying on.");
 		}
 
 
@@ -306,9 +323,9 @@ private static final String TAG = "BillingService";
 				calculate();
 			}});
 
-
+		Log.i(LOGS, "Calling first calculate() from onCreate");
 		calculate();
-
+		
 	}
 
 	public void calculate() {
@@ -507,36 +524,90 @@ private static final String TAG = "BillingService";
 	}
 
 
-	private void donateSelected() {
-		
-			if(BillingHelper.isBillingSupported()){
-				BillingHelper.requestPurchase(mContext, "donation.item"); //the name of the in-app item 
-	        } else {
-	        	Log.i(TAG,"Can't purchase on this device");
-	        	purchaseButton.setEnabled(false); //  press button before service started will disable when it shouldnt
-	        }
+	public void donateSelected() { //TODO
+
+		if (backgroundColorsPurchased == true){
+			Log.i(LOGS,"backgroundColors have already been purchased (says the userprefs). Calling colorChangeDialog.");
+			this.colorChangeDialog();
+		}else{
+
+			Log.i(LOGS, "Background colours were not purchased, or user prefs were cleared.");
+			Log.i(LOGS, "Checking to see if prefs were cleared/first install.");
+			prefsAlreadyExist = PreferenceManager.getDefaultSharedPreferences(
+					BeerConverter.this).getBoolean(PREFS_ALREADY_EXIST,
+							DEFAULT_CHECKSTATE);
+			if (prefsAlreadyExist == false){
+				Log.i(LOGS, "Prefs were cleared.");
+				PreferenceManager.getDefaultSharedPreferences(mContext).edit().putBoolean(
+						PREFS_ALREADY_EXIST, true).commit();
+				prefsAlreadyExist = true;
+
+				Log.i(LOGS,"Checking to see if billing is supported.");
+				if(BillingHelper.isBillingSupported()){
+					Log.i(LOGS,"Asking BillingHelper to restoreTransactionInformation");
+					BillingHelper.restoreTransactionInformation(BillingSecurity.generateNonce());
+					BillingHelper.setCompletedHandler(mTransactionHandler);
+				}else{
+					Log.i(LOGS, "Billing isn't supported.");
+				}
+			}else{
+				Log.i(LOGS, "Prefs were not cleared. User really did just not buy background colours.");
+				Log.i(LOGS,"backgroundColors have not been purchased. Checking if billing is supported.");
+				if(BillingHelper.isBillingSupported()){
+					Log.i(LOGS,"Requesting purchase of background.colors from market.");
+					BillingHelper.requestPurchase(mContext, "background.colors");
+					BillingHelper.setCompletedHandler(mTransactionHandler);
+				}else{
+					//billing not supported. Unlocking background colour changing anyway.
+					Log.i(LOGS,"Billing was not supported. Unlocking anyway.");
+					Toast.makeText(getApplicationContext(), "Billing not supported on device. Activating paid features anyway because I'm nice.", Toast.LENGTH_LONG).show();
+					backgroundColorsNowPurchased(true);
+				}
+			}
 		}
-		
-	
-	 public Handler mTransactionHandler = new Handler(){
- 		public void handleMessage(android.os.Message msg) {
- 			Log.i(TAG, "Transaction complete");
- 			Log.i(TAG, "Transaction status: "+BillingHelper.latestPurchase.purchaseState);
- 			Log.i(TAG, "Item purchased is: "+BillingHelper.latestPurchase.productId);
- 			
- 			if(BillingHelper.latestPurchase.isPurchased()){
- 			//	showItem();  //This was to show the in app purchase, but we're only using it to donate.
- 				//This would be the spot to make stuff happen after a purchase though.
- 			}
- 		};
- 	
- };
-	
- /**  //This was to make a photo of an "in app purchase" visible, but we're only using inapp billing for donations.
-	private void showItem() {
-		purchaseableItem.setVisibility(View.VISIBLE);
 	}
-**/
+
+
+
+
+
+			public void backgroundColorsNowPurchased(boolean b) {
+				PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean(
+						BACKGROUND_COLORS_PURCHASED, b).commit();
+				backgroundColorsPurchased = b;
+				colorChangeDialog(); //after saving the shared prefs, we call the dialog
+			}
+
+			public Handler mTransactionHandler = new Handler(){
+				public void handleMessage(android.os.Message msg) {
+					Log.w(LOGS, "mTransactionHandeler has been tripped.");
+					Log.i(TAG, "Transaction complete");
+					Log.i(TAG, "Transaction status: "+BillingHelper.latestPurchase.purchaseState);
+					Log.i(TAG, "Item purchased is: "+BillingHelper.latestPurchase.productId);
+
+					if(BillingHelper.latestPurchase.isPurchased()){
+						//this is where we show the stuff that the person purchased. In this case, the dialog to change the background colour.
+						backgroundColorsNowPurchased(true); //confirmed already bought background colours.
+						Log.i(LOGS,"setCompletedHandler"); //to confirm to the market that it's been activated.
+						BillingHelper.setCompletedHandler(mTransactionHandler);
+
+					}else{
+						//fail
+						Toast.makeText(getApplicationContext(), "Fail", Toast.LENGTH_SHORT).show();
+
+					}
+				}
+
+			};
+
+ public void colorChangeDialog() {
+
+		int color = PreferenceManager.getDefaultSharedPreferences(
+	                BeerConverter.this).getInt(COLOR_PREFERENCE_KEY,
+	                Color.BLACK);
+	        new ColorPickerDialog(BeerConverter.this, BeerConverter.this,
+	                color).show();
+	};
 	
 	
 	@Override
@@ -854,6 +925,7 @@ private static final String TAG = "BillingService";
 		 */
 		selected1 = p.getInt(POSITION_KEY1, BeerConverter.DEFAULT_POSITION);
 		selected2 = p.getInt(POSITION_KEY2, BeerConverter.DEFAULT_POSITION);
+		
 
 		/*
 		 * SharedPreferences doesn't fail if the code tries to get a non-existent key. The
@@ -964,7 +1036,22 @@ private static final String TAG = "BillingService";
 
 		return (e.commit());
 	}
-
+	
+	
+	//to change the background colour
+	public void colorChanged(int color) {
+        PreferenceManager.getDefaultSharedPreferences(this).edit().putInt(
+                COLOR_PREFERENCE_KEY, color).commit();
+        View someView = findViewById(R.id.mainLayoutView);
+        View root = someView.getRootView();
+        root.setBackgroundColor(color);
+        if (firstTimeSet==false){ //if this is the first time the colour is being set, it probably means the user just opened the app. We don't want the toast to show onCreate everytime.
+        	Toast.makeText(this,
+    				"Background Colour Set", Toast.LENGTH_SHORT).show();	
+        }else{
+        	firstTimeSet = false; //so that next time when the user does change the background colour it'll display a toast.
+        }
+        
+    }
 }
-
 

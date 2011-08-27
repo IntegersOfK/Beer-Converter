@@ -145,34 +145,38 @@ public class BillingHelper {
 	 * @param notifyIds
 	 */
 	protected static void confirmTransaction(String[] notifyIds) {
-		if (amIDead()) {
-			return;
-		}
-		Log.i(TAG, "confirmTransaction()");
-		Bundle request = makeRequestBundle("CONFIRM_NOTIFICATIONS");
-		request.putStringArray("NOTIFY_IDS", notifyIds);
-		try {
-			Bundle response = mService.sendBillingRequest(request);
+        if (amIDead()) {
+                return;
+        }
+        if (notifyIds[0] != null) {
+                Log.i(TAG, "confirmTransaction()");
+                Bundle request = makeRequestBundle("CONFIRM_NOTIFICATIONS");
+                request.putStringArray("NOTIFY_IDS", notifyIds);
+                Log.i(TAG, "Notify ID: " + notifyIds[0]);
+                try {
+                        Bundle response = mService.sendBillingRequest(request);
+ 
+                        //The REQUEST_ID key provides you with a unique request identifier for the request
+                        Long requestIndentifier         = (Long) response.get("REQUEST_ID");
+                        Log.i(TAG, "current request is:" + requestIndentifier);
+                               
+                        //The RESPONSE_CODE key provides you with the status of the request
+                        Integer responseCodeIndex       = (Integer) response.get("RESPONSE_CODE");
+                        C.ResponseCode responseCode = C.ResponseCode.valueOf(responseCodeIndex);
+                       
+                        Log.i(TAG, "CONFIRM_NOTIFICATIONS Sync Response code: "+responseCode.toString());
+                } catch (RemoteException e) {
+                        Log.e(TAG, "Failed, internet error maybe", e);
+                        Log.e(TAG, "Billing supported: " + isBillingSupported());
+                }
+        }
+}
 
-			//The REQUEST_ID key provides you with a unique request identifier for the request
-			Long requestIndentifier 	= (Long) response.get("REQUEST_ID");
-			Log.i(TAG, "current request is:" + requestIndentifier);
-			
-			//The RESPONSE_CODE key provides you with the status of the request
-			Integer responseCodeIndex 	= (Integer) response.get("RESPONSE_CODE");
-			C.ResponseCode responseCode = C.ResponseCode.valueOf(responseCodeIndex);
-			
-			Log.i(TAG, "CONFIRM_NOTIFICATIONS Sync Response code: "+responseCode.toString());
-		} catch (RemoteException e) {
-			Log.e(TAG, "Failed, internet error maybe", e);
-			Log.e(TAG, "Billing supported: " + isBillingSupported());
-		}
-	}
 	
 	/**
 	 * 
 	 * Can be used for when a user has reinstalled the app to give back prior purchases. 
-	 * if an item for sale's purchase type is "managed per user account" this means google will have a record ofthis transaction
+	 * if an item for sale's purchase type is "managed per user account" this means google will have a record of this transaction
 	 * 
 	 * A RESTORE_TRANSACTIONS request also triggers two asynchronous responses (broadcast intents). 
 	 * First, the Android Market application sends a RESPONSE_CODE broadcast intent, which provides status and error information about the request. 
@@ -181,6 +185,8 @@ public class BillingHelper {
 	 * The message includes the signature so you can verify the integrity of the signed string
 	 * @param nonce
 	 */
+		
+	
 	protected static void restoreTransactionInformation(Long nonce) {
 		if (amIDead()) {
 			return;
@@ -247,17 +253,19 @@ public class BillingHelper {
 
 	protected static void verifyPurchase(String signedData, String signature) {
 		ArrayList<VerifiedPurchase> purchases = BillingSecurity.verifyPurchase(signedData, signature);
-		latestPurchase = purchases.get(0);
-		
-		confirmTransaction(new String[]{latestPurchase.notificationId});
-		
-		if(mCompletedHandler != null){
-			mCompletedHandler.sendEmptyMessage(0);
-		} else {
-			Log.e(TAG, "verifyPurchase error. Handler not instantiated. Have you called setCompletedHandler()?");
+		if (purchases.isEmpty()){ //there was an error/forceclose being caused by confirmtransaction when nothing had been bought yet.
+			//do nothing
+		}else{
+			latestPurchase = purchases.get(0);
+			confirmTransaction(new String[]{latestPurchase.notificationId});
+			if(mCompletedHandler != null){
+				mCompletedHandler.sendEmptyMessage(0);
+			} else {
+				Log.e(TAG, "verifyPurchase error. Handler not instantiated. Have you called setCompletedHandler()?");
+			}
 		}
 	}
-	
+
 	public static void stopService(){
 		mContext.stopService(new Intent(mContext, BillingService.class));
 		mService = null;

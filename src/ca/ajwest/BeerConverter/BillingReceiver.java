@@ -3,13 +3,11 @@ package ca.ajwest.BeerConverter;
 import static ca.ajwest.BeerConverter.C.*;
 
 import java.util.ArrayList;
-
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Message;
 import android.util.Log;
-
 import ca.ajwest.BeerConverter.C;
 import ca.ajwest.BeerConverter.BillingSecurity.VerifiedPurchase;
 
@@ -42,6 +40,8 @@ public class BillingReceiver extends BroadcastReceiver {
 		Log.i(TAG, "purchaseStateChanged got signedData: " + signedData);
 		Log.i(TAG, "purchaseStateChanged got signature: " + signature);
 		BillingHelper.verifyPurchase(signedData, signature);
+		
+		
 	}
 	
 	private void notify(Context context, String notifyId) {

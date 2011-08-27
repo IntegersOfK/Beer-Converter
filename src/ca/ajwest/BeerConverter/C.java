@@ -50,9 +50,9 @@ public class C {
 	
 	// Intent actions that we send from the BillingReceiver to the
 	// BillingService. Defined by this application.
-	public static final String ACTION_CONFIRM_NOTIFICATION = "com.example.dungeons.CONFIRM_NOTIFICATION";
-	public static final String ACTION_GET_PURCHASE_INFORMATION = "com.example.dungeons.GET_PURCHASE_INFORMATION";
-	public static final String ACTION_RESTORE_TRANSACTIONS = "com.example.dungeons.RESTORE_TRANSACTIONS";
+	public static final String ACTION_CONFIRM_NOTIFICATION = "ca.ajwest.BeerConverter.CONFIRM_NOTIFICATION";
+	public static final String ACTION_GET_PURCHASE_INFORMATION = "ca.ajwest.BeerConverter.GET_PURCHASE_INFORMATION";
+	public static final String ACTION_RESTORE_TRANSACTIONS = "ca.ajwest.BeerConverter.RESTORE_TRANSACTIONS";
 
 	// Intent actions that we receive in the BillingReceiver from Market.
 	// These are defined by Market and cannot be changed.
