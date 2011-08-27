@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-      package="ca.ajwest.BeerConverter" android:versionName="2.0.6" android:versionCode="51">
+      package="ca.ajwest.BeerConverter" android:versionName="2.0.6" android:versionCode="52">
     <uses-sdk android:targetSdkVersion="11" android:maxSdkVersion="12" android:minSdkVersion="4"/>
 
     <application android:icon="@drawable/icon" android:label="@string/app_name">
