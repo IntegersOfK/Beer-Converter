@@ -9,8 +9,13 @@ import java.nio.ByteBuffer;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+
+import net.robotmedia.billing.BillingRequest.ResponseCode;
+import net.robotmedia.billing.helper.AbstractBillingActivity;
+import net.robotmedia.billing.model.Transaction.PurchaseState;
 
 import android.os.Bundle;
 import android.annotation.SuppressLint;
@@ -41,9 +46,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.TextView;
-import android.support.v4.app.NavUtils;
 
-public class BeerConverterActivity extends Activity {
+public class BeerConverterActivity extends AbstractBillingActivity {
 	
 	//Variables to create before onCreate
 	String LOGS = "BeerConverterActiviy";
@@ -59,11 +63,12 @@ public class BeerConverterActivity extends Activity {
 	static EditText mEditTextA1, mEditTextA2, mEditTextB1, mEditTextB2, mEditTextC1, mEditTextC2, mEditTextD1, mEditTextD2,mEditTextE1,
 	mEditTextE2, mEditTextF1, mEditTextF2, mEditTextG1, mEditTextG2, mEditTextH1, mEditTextH2, mEditTextI1, mEditTextI2, mEditTextX1; //continued from line above
 	TextView mExplainText1, mExplainText2;
-	LinearLayout mLinearLayoutA, mLinearLayoutB, mLinearLayoutC, mLinearLayoutD, mLinearLayoutE, mLinearLayoutF, mLinearLayoutG, mLinearLayoutH, mLinearLayoutI, mLinearLayoutX;
+	LinearLayout mLinearLayoutA, mLinearLayoutB, mLinearLayoutC, mLinearLayoutD, mLinearLayoutE, mLinearLayoutF, mLinearLayoutG, mLinearLayoutH, mLinearLayoutI, mLinearLayoutX, mAddRemoveFieldsButtons;
 	Button mButtonMinus, mButtonPlus;
 	int extraFields = 0; //there are no extraFields at default
 	public static final String PREFS_1 = "MyPrefsFile";
 	int mPositionA, mPositionB, mPositionC, mPositionD, mPositionE, mPositionF, mPositionG, mPositionH, mPositionI, mPositionX;
+	public boolean plusVersion; //for inapp billing
 	
 
     @Override
@@ -106,6 +111,7 @@ public class BeerConverterActivity extends Activity {
         mLinearLayoutH = (LinearLayout) findViewById(R.id.LinearLayoutH);
         mLinearLayoutI = (LinearLayout) findViewById(R.id.LinearLayoutI);
         mLinearLayoutX = (LinearLayout) findViewById(R.id.LinearLayoutYellow);
+        mAddRemoveFieldsButtons = (LinearLayout) findViewById(R.id.AddRemoveFieldsButtons);
         
         //by default, the initial spinners are shown whereas the others aren't until purchased
         mSpinnerA = (Spinner) findViewById(R.id.SpinnerA); //SpinnerA is the first, B-I are hidden unless unlocked
@@ -462,9 +468,6 @@ public class BeerConverterActivity extends Activity {
 				calculate();
 			}});
 		
-		
-	
-		
 
 		/**
 		 * We have now completed the section dedicated to EditText changed listeners.
@@ -503,6 +506,7 @@ public class BeerConverterActivity extends Activity {
 		String mVI2Temp = settings.getString("mVI2", "1");
 		String mVX1Temp = settings.getString("mVX1", "5.0");
 		int extraFieldsRestore = settings.getInt("mExtraFields", 0);
+		plusVersion = settings.getBoolean("plusVersionRestore", false);
 
 		Log.i(LOGS, "Restoring spinner postions from prefs data");
 		mSpinnerA.setSelection(mPositionA);
@@ -551,6 +555,12 @@ public class BeerConverterActivity extends Activity {
 		}
 		
 		
+		//makes the add/remove field buttons visible if the user has purchased.
+		if (plusVersion == true){ //value should be restored from shared preferences.
+			mAddRemoveFieldsButtons.setVisibility(LinearLayout.VISIBLE);
+		}
+		
+		
     }
 
     @Override
@@ -591,6 +601,7 @@ public class BeerConverterActivity extends Activity {
       editor.putString("mVI2", mEditTextI2.getText().toString());
       editor.putString("mVX1", mEditTextX1.getText().toString());
       editor.putInt("mExtraFields", extraFields);
+      editor.putBoolean("plusVersionRestore", plusVersion);
       
 
       // Commit the edits!
@@ -741,6 +752,7 @@ public class BeerConverterActivity extends Activity {
 	Double spinnerValueA, spinnerValueB, spinnerValueC, spinnerValueD, spinnerValueE, spinnerValueF, spinnerValueG, spinnerValueH, spinnerValueI, spinnerValueX;
 	String spinnerNameA, spinnerNameB, spinnerNameC, spinnerNameD, spinnerNameE, spinnerNameF, spinnerNameG, spinnerNameH, spinnerNameI, spinnerNameX;
 	Double vA1, vA2, vB1, vB2, vC1, vC2, vD1, vD2, vE1, vE2, vF1, vF2, vG1, vG2, vH1, vH2, vI1, vI2, vX1;
+	String mAString, mBString, mCString, mDString, mEString, mFString, mGString, mHString, mIString, mXString;
 	private void calculate() {
 		//Initialize the variables that will contain the values of the EditTexts
 
@@ -774,135 +786,162 @@ public class BeerConverterActivity extends Activity {
 			vA1 = Double.parseDouble(mEditTextA1.getText().toString());	
 			vA2 = Double.parseDouble(mEditTextA2.getText().toString());
 			mLinearLayoutA.setBackgroundColor(Color.GREEN);
+			mAString = vA2 + " " + spinnerNameA + "(" + vA1 + "%)\n";
 		} catch (NumberFormatException e) {
 			vA1 = 0.0;
 			vA2 = 0.0;
 			mLinearLayoutA.setBackgroundColor(Color.RED);
+			mAString = "\0";
 		}
 		if (mLinearLayoutB.getVisibility() == View.VISIBLE){ //this if statement checks to make sure we can see the view
 			try{
 				vB1 = Double.parseDouble(mEditTextB1.getText().toString());
 				vB2 = Double.parseDouble(mEditTextB2.getText().toString());
 				mLinearLayoutB.setBackgroundColor(Color.GREEN);
+				mBString = vB2 + " " + spinnerNameB + "(" + vB1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vB1 = 0.0;
 				vB2 = 0.0;
 				mLinearLayoutB.setBackgroundColor(Color.RED);
+				mBString = "\0";
 			}
 		}else{
 			vB1 = 0.0;
 			vB2 = 0.0;
+			mBString = "\0";
 		}
 		if (mLinearLayoutC.getVisibility() == View.VISIBLE){ //this if statement checks to make sure we can see the view
 			try{
 				vC1 = Double.parseDouble(mEditTextC1.getText().toString());
 				vC2 = Double.parseDouble(mEditTextC2.getText().toString());
 				mLinearLayoutC.setBackgroundColor(Color.GREEN);
+				mCString = vC2 + " " + spinnerNameC + "(" + vC1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vC1 = 0.0;
 				vC2 = 0.0;
 				mLinearLayoutC.setBackgroundColor(Color.RED);
+				mCString = "\0";
 			}
 		}else{
 			vC1 = 0.0;
 			vC2 = 0.0;
+			mCString = "\0";
 		}
 		if (mLinearLayoutD.getVisibility() == View.VISIBLE){ //this if statement checks to make sure we can see the view
 			try{
 				vD1 = Double.parseDouble(mEditTextD1.getText().toString());
 				vD2 = Double.parseDouble(mEditTextD2.getText().toString());
 				mLinearLayoutD.setBackgroundColor(Color.GREEN);
+				mDString = vD2 + " " + spinnerNameD + "(" + vD1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vD1 = 0.0;
 				vD2 = 0.0;
 				mLinearLayoutD.setBackgroundColor(Color.RED);
+				mDString = "\0";
 			}
 		}else{
 			vD1 = 0.0;
 			vD2 = 0.0;
+			mDString = "\0";
 		}
 		if (mLinearLayoutE.getVisibility() == View.VISIBLE){ //this if statement checks to make sure we can see the view
 			try{
 				vE1 = Double.parseDouble(mEditTextE1.getText().toString());
 				vE2 = Double.parseDouble(mEditTextE2.getText().toString());
 				mLinearLayoutE.setBackgroundColor(Color.GREEN);
+				mEString = vE2 + " " + spinnerNameE + "(" + vE1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vE1 = 0.0;
 				vE2 = 0.0;
 				mLinearLayoutE.setBackgroundColor(Color.RED);
+				mEString = "\0";
 			}
 		}else{
 			vE1 = 0.0;
 			vE2 = 0.0;
+			mEString = "\0";
 		}
 		if (mLinearLayoutF.getVisibility() == View.VISIBLE){ //this if statement checks to make sure we can see the view
 			try{
 				vF1 = Double.parseDouble(mEditTextF1.getText().toString());
 				vF2 = Double.parseDouble(mEditTextF2.getText().toString());
 				mLinearLayoutF.setBackgroundColor(Color.GREEN);
+				mFString = vF2 + " " + spinnerNameF + "(" + vF1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vF1 = 0.0;
 				vF2 = 0.0;
 				mLinearLayoutF.setBackgroundColor(Color.RED);
+				mFString = "\0";
 			}
 		}else{
 			vF1 = 0.0;
 			vF2 = 0.0;
+			mFString = "\0";
 		}
 		if (mLinearLayoutG.getVisibility() == View.VISIBLE){ //this if statement checks to make sure we can see the view
 			try{
 				vG1 = Double.parseDouble(mEditTextG1.getText().toString());
 				vG2 = Double.parseDouble(mEditTextG2.getText().toString());
 				mLinearLayoutG.setBackgroundColor(Color.GREEN);
+				mGString = vG2 + " " + spinnerNameG + "(" + vG1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vG1 = 0.0;
 				vG2 = 0.0;
 				mLinearLayoutG.setBackgroundColor(Color.RED);
+				mGString = "\0";
 			}
 		}else{
 			vG1 = 0.0;
 			vG2 = 0.0;
+			mGString = "\0";
 		}
 		if (mLinearLayoutH.getVisibility() == View.VISIBLE){ //this if statement checks to make sure we can see the view
 			try{
 				vH1 = Double.parseDouble(mEditTextH1.getText().toString());
 				vH2 = Double.parseDouble(mEditTextH2.getText().toString());
 				mLinearLayoutH.setBackgroundColor(Color.GREEN);
+				mHString = vH2 + " " + spinnerNameH + "(" + vH1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vH1 = 0.0;
 				vH2 = 0.0;
 				mLinearLayoutH.setBackgroundColor(Color.RED);
+				mHString = "\0";
 			}
 		}else{
 			vH1 = 0.0;
 			vH2 = 0.0;
+			mHString = "\0";
 		}
 		if (mLinearLayoutI.getVisibility() == View.VISIBLE){ //this if statement checks to make sure we can see the view
 			try{
 				vI1 = Double.parseDouble(mEditTextI1.getText().toString());
 				vI2 = Double.parseDouble(mEditTextI2.getText().toString());
 				mLinearLayoutI.setBackgroundColor(Color.GREEN);
+				mIString = vI2 + " " + spinnerNameI + "(" + vI1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vI1 = 0.0;
 				vI2 = 0.0;
 				mLinearLayoutI.setBackgroundColor(Color.RED);
+				mIString = "\0";
 			}
 		}else{
 			vI1 = 0.0;
 			vI2 = 0.0;
+			mIString = "\0";
 		}
 		try{
 			vX1 = Double.parseDouble(mEditTextX1.getText().toString());
 			mLinearLayoutX.setBackgroundColor(Color.GREEN);
+			
 		} catch (NumberFormatException e) {
 			vX1 = 0.0;
 			mLinearLayoutX.setBackgroundColor(Color.RED);
 		}
 
 
-		//Starting the actual caclulations with the values that have been set above
+		//Starting the actual calculations with the values that have been set above
 		
-		//the first section checks the defualt fields, as they must be filled out in order to complete the calculation.
+		//the first section checks the default fields, as they must be filled out in order to complete the calculation.
 		if (vA1 == 0.0){
 			//fail, because vA1 must be filled out.
 			mExplainText2.setText("Error");
@@ -929,8 +968,7 @@ public class BeerConverterActivity extends Activity {
 		
 		//Now to figure out how many of the target unit that would be:
 		double targetUnit =   vTotalAlcohol / (spinnerValueX * (vX1/100)) ;
-		
-		
+
 		
 		/**
 		 * ExplainText should be formatted as this:
@@ -939,8 +977,11 @@ public class BeerConverterActivity extends Activity {
 		 * 
 		 */
 		
-		mExplainText2.setText(targetUnit+"");
-		mExplainText1.setText("Your total alcohol is: " + vTotalAlcohol + "ml and your total number of targetUnits is: " + targetUnit + ".");
+		
+		String mExplainText3 = "You asked to add together:\n" + mAString + mBString + mCString + mDString + mEString + mFString + mGString + mHString + mIString + "\n\n Which equals: \n" + roundTwoDecimals(targetUnit) + " " + spinnerNameX + "(" + vX1 + "%)";
+		mExplainText2.setText(roundTwoDecimals(targetUnit)+"");
+		mExplainText1.setText("Your total alcohol is: " + roundTwoDecimals(vTotalAlcohol) + "ml.\n" + mExplainText3);
+		
 		
 		
 		
@@ -949,7 +990,10 @@ public class BeerConverterActivity extends Activity {
 		//TODO then you'll want to figure out how to save the states of the spinners and EditTexts in prefs, DONE and maybe make some kind of "Clear all" option LOW PRIORITY
 		//it would be nice to long-hold a unit to edit it
 		//TODO then you'll likely want to implement custom units DONE
-		//TODO then you'll figure out inapp billing
+		//TODO then you'll figure out inapp billing DONE
+		//TODO Explain text and proper rounding
+		//TODO colours
+		//TODO actual testing of everything, especially inapp billing restoration and rounding.
 		
 	
 	}
@@ -1278,6 +1322,8 @@ public class BeerConverterActivity extends Activity {
 		case R.id.clear_units:
 			clearUnitsSelected();
 			return true;
+		case R.id.add_fields:
+			addFieldsSelected();
 		default:
 			return super.onOptionsItemSelected(item);
 		}
@@ -1348,6 +1394,21 @@ public class BeerConverterActivity extends Activity {
 		calculate();
 
 	}
+	
+
+	//This method allows a user to purchased added fields through in-app billing.
+	public void addFieldsSelected(){
+		if (plusVersion == false){
+			//requestPurchase("plus.version");
+			requestPurchase("android.test.purchased"); //for testing
+			return; 
+		}else{
+			Toast.makeText(getApplicationContext(), "You have already purchased the Premium Version.", Toast.LENGTH_SHORT).show();
+			mAddRemoveFieldsButtons.setVisibility(LinearLayout.VISIBLE);
+			//TODO Ideally we would remove the Add Fields option from the options menu. 
+		}				
+	}
+	
 
 	/*Start file reading*/
 	private String readFile(String path) throws IOException {
@@ -1398,7 +1459,57 @@ public class BeerConverterActivity extends Activity {
 		return deleted; //returns true if the file was deleted, false if otherwise.
 	}
 
+	public byte[] getObfuscationSalt() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getPublicKey() {
+		Log.i(LOGS, "Somebody just requested the public key.");
+		return ""; //PUBLIC KEY GOES HERE. REMOVED FOR PRIVACY.
+	}
+
+	@Override
+	public void onBillingChecked(boolean supported) {
+		// TODO Auto-generated method stub
+		Log.e(LOGS, "supported: " + supported);
+	}
+
+	@Override
+	public void onSubscriptionChecked(boolean supported) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void onPurchaseStateChanged(String itemId, PurchaseState state) {
+		// TODO Auto-generated method stub
+		Log.i(LOGS, "onPurchaseStateChanged - itemId: " + itemId + " state: " + state);
+		
+		if (state.toString().equals("PURCHASED")){	
+			
+			addFieldsSelected();
+		}
+		
+	}
+
+	@Override
+	public void onRequestPurchaseResponse(String itemId, ResponseCode response) {
+		// TODO Auto-generated method stub
+		Log.i(LOGS, "onRequestPurchaseResponse - itemId: " + itemId + " ResponseCode: " + response);
+		plusVersion = true;
+		mAddRemoveFieldsButtons.setVisibility(LinearLayout.VISIBLE);
+
+	}
+
 	//*end delete file/*
+	
+	
+	double roundTwoDecimals(double d)
+	{
+	    DecimalFormat twoDForm = new DecimalFormat("#.##");
+	    return Double.valueOf(twoDForm.format(d));
+	}
 
 
     
