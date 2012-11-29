@@ -62,7 +62,7 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 	Spinner mSpinnerA, mSpinnerB, mSpinnerC, mSpinnerD, mSpinnerE, mSpinnerF, mSpinnerG, mSpinnerH, mSpinnerI, mSpinnerX;
 	static EditText mEditTextA1, mEditTextA2, mEditTextB1, mEditTextB2, mEditTextC1, mEditTextC2, mEditTextD1, mEditTextD2,mEditTextE1,
 	mEditTextE2, mEditTextF1, mEditTextF2, mEditTextG1, mEditTextG2, mEditTextH1, mEditTextH2, mEditTextI1, mEditTextI2, mEditTextX1; //continued from line above
-	TextView mExplainText1, mExplainText2;
+	TextView mExplainText1, mExplainText2, mTextViewHelpText1;
 	LinearLayout mLinearLayoutA, mLinearLayoutB, mLinearLayoutC, mLinearLayoutD, mLinearLayoutE, mLinearLayoutF, mLinearLayoutG, mLinearLayoutH, mLinearLayoutI, mLinearLayoutX, mAddRemoveFieldsButtons;
 	Button mButtonMinus, mButtonPlus;
 	int extraFields = 0; //there are no extraFields at default
@@ -79,6 +79,7 @@ public class BeerConverterActivity extends AbstractBillingActivity {
         //setting TextView for explainText
         mExplainText1 = (TextView)findViewById(R.id.ExplainText1);
         mExplainText2 = (TextView)findViewById(R.id.alcoholIndicator);
+        mTextViewHelpText1 = (TextView)findViewById(R.id.textViewHelpText1);
         
         //plus and minus buttons
         mButtonMinus = (Button)findViewById(R.id.buttonMinus);
@@ -785,24 +786,24 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 		try{
 			vA1 = Double.parseDouble(mEditTextA1.getText().toString());	
 			vA2 = Double.parseDouble(mEditTextA2.getText().toString());
-			mLinearLayoutA.setBackgroundColor(Color.GREEN);
+			mLinearLayoutA.setBackgroundResource(R.color.GREEN);
 			mAString = vA2 + " " + spinnerNameA + "(" + vA1 + "%)\n";
 		} catch (NumberFormatException e) {
 			vA1 = 0.0;
 			vA2 = 0.0;
-			mLinearLayoutA.setBackgroundColor(Color.RED);
+			mLinearLayoutA.setBackgroundResource(R.color.RED);
 			mAString = "\0";
 		}
 		if (mLinearLayoutB.getVisibility() == View.VISIBLE){ //this if statement checks to make sure we can see the view
 			try{
 				vB1 = Double.parseDouble(mEditTextB1.getText().toString());
 				vB2 = Double.parseDouble(mEditTextB2.getText().toString());
-				mLinearLayoutB.setBackgroundColor(Color.GREEN);
+				mLinearLayoutB.setBackgroundResource(R.color.GREEN);
 				mBString = vB2 + " " + spinnerNameB + "(" + vB1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vB1 = 0.0;
 				vB2 = 0.0;
-				mLinearLayoutB.setBackgroundColor(Color.RED);
+				mLinearLayoutB.setBackgroundResource(R.color.RED);
 				mBString = "\0";
 			}
 		}else{
@@ -814,12 +815,12 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 			try{
 				vC1 = Double.parseDouble(mEditTextC1.getText().toString());
 				vC2 = Double.parseDouble(mEditTextC2.getText().toString());
-				mLinearLayoutC.setBackgroundColor(Color.GREEN);
+				mLinearLayoutC.setBackgroundResource(R.color.GREEN);
 				mCString = vC2 + " " + spinnerNameC + "(" + vC1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vC1 = 0.0;
 				vC2 = 0.0;
-				mLinearLayoutC.setBackgroundColor(Color.RED);
+				mLinearLayoutC.setBackgroundResource(R.color.RED);
 				mCString = "\0";
 			}
 		}else{
@@ -831,12 +832,12 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 			try{
 				vD1 = Double.parseDouble(mEditTextD1.getText().toString());
 				vD2 = Double.parseDouble(mEditTextD2.getText().toString());
-				mLinearLayoutD.setBackgroundColor(Color.GREEN);
+				mLinearLayoutD.setBackgroundResource(R.color.GREEN);
 				mDString = vD2 + " " + spinnerNameD + "(" + vD1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vD1 = 0.0;
 				vD2 = 0.0;
-				mLinearLayoutD.setBackgroundColor(Color.RED);
+				mLinearLayoutD.setBackgroundResource(R.color.RED);
 				mDString = "\0";
 			}
 		}else{
@@ -848,12 +849,12 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 			try{
 				vE1 = Double.parseDouble(mEditTextE1.getText().toString());
 				vE2 = Double.parseDouble(mEditTextE2.getText().toString());
-				mLinearLayoutE.setBackgroundColor(Color.GREEN);
+				mLinearLayoutE.setBackgroundResource(R.color.GREEN);
 				mEString = vE2 + " " + spinnerNameE + "(" + vE1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vE1 = 0.0;
 				vE2 = 0.0;
-				mLinearLayoutE.setBackgroundColor(Color.RED);
+				mLinearLayoutE.setBackgroundResource(R.color.RED);
 				mEString = "\0";
 			}
 		}else{
@@ -865,12 +866,12 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 			try{
 				vF1 = Double.parseDouble(mEditTextF1.getText().toString());
 				vF2 = Double.parseDouble(mEditTextF2.getText().toString());
-				mLinearLayoutF.setBackgroundColor(Color.GREEN);
+				mLinearLayoutF.setBackgroundResource(R.color.GREEN);
 				mFString = vF2 + " " + spinnerNameF + "(" + vF1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vF1 = 0.0;
 				vF2 = 0.0;
-				mLinearLayoutF.setBackgroundColor(Color.RED);
+				mLinearLayoutF.setBackgroundResource(R.color.RED);
 				mFString = "\0";
 			}
 		}else{
@@ -882,12 +883,12 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 			try{
 				vG1 = Double.parseDouble(mEditTextG1.getText().toString());
 				vG2 = Double.parseDouble(mEditTextG2.getText().toString());
-				mLinearLayoutG.setBackgroundColor(Color.GREEN);
+				mLinearLayoutG.setBackgroundResource(R.color.GREEN);
 				mGString = vG2 + " " + spinnerNameG + "(" + vG1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vG1 = 0.0;
 				vG2 = 0.0;
-				mLinearLayoutG.setBackgroundColor(Color.RED);
+				mLinearLayoutG.setBackgroundResource(R.color.RED);
 				mGString = "\0";
 			}
 		}else{
@@ -899,12 +900,12 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 			try{
 				vH1 = Double.parseDouble(mEditTextH1.getText().toString());
 				vH2 = Double.parseDouble(mEditTextH2.getText().toString());
-				mLinearLayoutH.setBackgroundColor(Color.GREEN);
+				mLinearLayoutH.setBackgroundResource(R.color.GREEN);
 				mHString = vH2 + " " + spinnerNameH + "(" + vH1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vH1 = 0.0;
 				vH2 = 0.0;
-				mLinearLayoutH.setBackgroundColor(Color.RED);
+				mLinearLayoutH.setBackgroundResource(R.color.RED);
 				mHString = "\0";
 			}
 		}else{
@@ -916,12 +917,12 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 			try{
 				vI1 = Double.parseDouble(mEditTextI1.getText().toString());
 				vI2 = Double.parseDouble(mEditTextI2.getText().toString());
-				mLinearLayoutI.setBackgroundColor(Color.GREEN);
+				mLinearLayoutI.setBackgroundResource(R.color.GREEN);
 				mIString = vI2 + " " + spinnerNameI + "(" + vI1 + "%)\n";
 			} catch (NumberFormatException e) {
 				vI1 = 0.0;
 				vI2 = 0.0;
-				mLinearLayoutI.setBackgroundColor(Color.RED);
+				mLinearLayoutI.setBackgroundResource(R.color.RED);
 				mIString = "\0";
 			}
 		}else{
@@ -931,11 +932,11 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 		}
 		try{
 			vX1 = Double.parseDouble(mEditTextX1.getText().toString());
-			mLinearLayoutX.setBackgroundColor(Color.GREEN);
+			mLinearLayoutX.setBackgroundResource(R.color.GREEN);
 			
 		} catch (NumberFormatException e) {
 			vX1 = 0.0;
-			mLinearLayoutX.setBackgroundColor(Color.RED);
+			mLinearLayoutX.setBackgroundResource(R.color.RED);
 		}
 
 
@@ -976,9 +977,12 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 		 * = resultNumber unitX at vX1%.
 		 * 
 		 */
-		
-		
-		String mExplainText3 = "You asked to add together:\n" + mAString + mBString + mCString + mDString + mEString + mFString + mGString + mHString + mIString + "\n\n Which equals: \n" + roundTwoDecimals(targetUnit) + " " + spinnerNameX + "(" + vX1 + "%)";
+		String mExplainText3;
+		if (extraFields == 0){
+			mExplainText3 = "The amount of alcohol in:\n " + mAString + "\n Equals: \n" + roundTwoDecimals(targetUnit) + " " + spinnerNameX + "(" + vX1 + "%)";
+		}else{ //language has to change to describe the adding together process
+			mExplainText3 = "You asked to add together:\n" + mAString + mBString + mCString + mDString + mEString + mFString + mGString + mHString + mIString + "\n Which equals: \n" + roundTwoDecimals(targetUnit) + " " + spinnerNameX + "(" + vX1 + "%)";
+		}
 		mExplainText2.setText(roundTwoDecimals(targetUnit)+"");
 		mExplainText1.setText("Your total alcohol is: " + roundTwoDecimals(vTotalAlcohol) + "ml.\n" + mExplainText3);
 		
@@ -1004,6 +1008,7 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 			switch (extraFields){
 			case 1:
 				mLinearLayoutB.setVisibility(LinearLayout.GONE);
+				mTextViewHelpText1.setText("The alcohol that you have inputted above, will be converted into the target unit below.");
 				calculate();
 				break;
 			case 2:
@@ -1045,6 +1050,8 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 	
 	private void addField() {
 		if (extraFields < 8) { // there is a maximum of 8 extra fields
+			mTextViewHelpText1.setText("The alcohol that you have inputted above, will be added together and converted below.");
+
 			switch (extraFields) {
 			case 0:
 				mLinearLayoutB.setVisibility(LinearLayout.VISIBLE);
@@ -1399,11 +1406,11 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 	//This method allows a user to purchased added fields through in-app billing.
 	public void addFieldsSelected(){
 		if (plusVersion == false){
-			//requestPurchase("plus.version");
-			requestPurchase("android.test.purchased"); //for testing
+			requestPurchase("plus.version");
+	//		requestPurchase("android.test.purchased"); //for testing
 			return; 
 		}else{
-			Toast.makeText(getApplicationContext(), "You have already purchased the Premium Version.", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getApplicationContext(), "Premium Version has been activated. Thanks!", Toast.LENGTH_SHORT).show();
 			mAddRemoveFieldsButtons.setVisibility(LinearLayout.VISIBLE);
 			//TODO Ideally we would remove the Add Fields option from the options menu. 
 		}				
@@ -1460,34 +1467,30 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 	}
 
 	public byte[] getObfuscationSalt() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	public String getPublicKey() {
 		Log.i(LOGS, "Somebody just requested the public key.");
-		return ""; //PUBLIC KEY GOES HERE. REMOVED FOR PRIVACY.
+		return <REMOVED FOR PRIVACY>;
 	}
 
 	@Override
 	public void onBillingChecked(boolean supported) {
-		// TODO Auto-generated method stub
 		Log.e(LOGS, "supported: " + supported);
 	}
 
 	@Override
 	public void onSubscriptionChecked(boolean supported) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onPurchaseStateChanged(String itemId, PurchaseState state) {
-		// TODO Auto-generated method stub
 		Log.i(LOGS, "onPurchaseStateChanged - itemId: " + itemId + " state: " + state);
 		
 		if (state.toString().equals("PURCHASED")){	
-			
+			plusVersion = true;
 			addFieldsSelected();
 		}
 		
@@ -1495,7 +1498,6 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 
 	@Override
 	public void onRequestPurchaseResponse(String itemId, ResponseCode response) {
-		// TODO Auto-generated method stub
 		Log.i(LOGS, "onRequestPurchaseResponse - itemId: " + itemId + " ResponseCode: " + response);
 		plusVersion = true;
 		mAddRemoveFieldsButtons.setVisibility(LinearLayout.VISIBLE);

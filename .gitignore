@@ -1,0 +1,7 @@
+#All the files and directories mentioned will never get committed
+
+.classpath
+.project
+bin/
+gen/
+*.properties

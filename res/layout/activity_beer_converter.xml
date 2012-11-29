@@ -1,10 +1,9 @@
 <LinearLayout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/LinearLayoutMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="top"
-    android:orientation="vertical" >
+    android:orientation="vertical" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
         android:id="@+id/LinearLayoutBlue1"
@@ -12,19 +11,19 @@
         android:layout_height="wrap_content"
         android:background="#cfe2f3"
         android:orientation="horizontal" >
-
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:orientation="vertical" >
-
-            <TextView
+            android:layout_weight=".75"
+            android:orientation="vertical" ><TextView
                 android:id="@+id/TextViewUnitTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
                 android:text="Unit"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+
         </LinearLayout>
 
         <LinearLayout
@@ -32,27 +31,29 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical" >
-
+
             <TextView
                 android:id="@+id/TextViewAlcoholContentTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:text="Alcohol Content"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:orientation="vertical" >
-
-            <TextView
+            android:orientation="vertical" ><TextView
                 android:id="@+id/TextViewQuantityTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
                 android:text="Quantity"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
+
         </LinearLayout>
     </LinearLayout>
 
@@ -60,10 +61,10 @@
         android:id="@+id/scrollViewMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" >
-
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="fill_parent"
+            android:layout_height="match_parent"
             android:gravity="center_horizontal"
             android:orientation="vertical" >
 
@@ -73,7 +74,7 @@
                 android:layout_height="wrap_content"
                 android:background="#d9ead3"
                 android:orientation="vertical" >
-
+
 				<LinearLayout
 				    android:id="@+id/LinearLayoutA"
 				    android:layout_width="match_parent"
@@ -81,44 +82,46 @@
 				    android:fitsSystemWindows="true"
 				    android:orientation="horizontal"
 				    android:visibility="visible" >
-
+
 				    <LinearLayout
-				        android:layout_width="0dp"
+				        android:layout_width="match_parent"
 				        android:layout_height="match_parent"
-				        android:layout_weight="1"
+				        android:layout_weight="0.75"
 				        android:orientation="vertical" >
-
+
 				        <Spinner
 				            android:id="@+id/SpinnerA"
 				            android:layout_width="match_parent"
-				            android:layout_height="match_parent"
-				            android:layout_weight="1" />
-				    </LinearLayout>
+				            android:layout_height="match_parent" />
 
+				    </LinearLayout>
+
 				    <LinearLayout
-				        android:layout_width="0dp"
-				        android:layout_height="wrap_content"
+				        android:layout_width="match_parent"
+				        android:layout_height="match_parent"
 				        android:layout_weight="1"
 				        android:orientation="vertical" >
-
+
 				        <EditText
 				            android:id="@+id/EditTextA1"
-				            android:layout_width="fill_parent"
+				            android:layout_width="match_parent"
 				            android:layout_height="match_parent"
 				            android:inputType="numberDecimal" />
-				    </LinearLayout>
 
+				    </LinearLayout>
+
 				    <LinearLayout
-				        android:layout_width="0dp"
-				        android:layout_height="wrap_content"
+				        android:layout_width="match_parent"
+				        android:layout_height="match_parent"
 				        android:layout_weight="1"
 				        android:orientation="vertical" >
+
+<EditText
+    android:id="@+id/EditTextA2"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:inputType="numberDecimal" />
 
-				        <EditText
-				            android:id="@+id/EditTextA2"
-				            android:layout_width="fill_parent"
-				            android:layout_height="match_parent"
-				            android:inputType="numberDecimal" />
 				    </LinearLayout>
 				</LinearLayout>
 
@@ -129,11 +132,11 @@
                     android:fitsSystemWindows="true"
                     android:orientation="horizontal"
                     android:visibility="gone" >
-
+
                     <LinearLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="0.75"
                         android:orientation="vertical" >
 
                         <Spinner
@@ -141,10 +144,10 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent" />
                     </LinearLayout>
-
+
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:orientation="vertical" >
 
@@ -154,10 +157,10 @@
                             android:layout_height="match_parent"
                             android:inputType="numberDecimal" />
                     </LinearLayout>
-
+
                     <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:orientation="vertical" >
 
@@ -175,11 +178,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:visibility="gone" >
-
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="0.75"
                         android:orientation="vertical" >
 
                         <Spinner
@@ -221,11 +224,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:visibility="gone" >
-
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="0.75"
                         android:orientation="vertical" >
 
                         <Spinner
@@ -267,11 +270,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:visibility="gone" >
-
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="0.75"
                         android:orientation="vertical" >
 
                         <Spinner
@@ -313,11 +316,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:visibility="gone" >
-
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="0.75"
                         android:orientation="vertical" >
 
                         <Spinner
@@ -359,11 +362,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:visibility="gone" >
-
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="0.75"
                         android:orientation="vertical" >
 
                         <Spinner
@@ -405,11 +408,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:visibility="gone" >
-
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="0.75"
                         android:orientation="vertical" >
 
                         <Spinner
@@ -451,11 +454,11 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:visibility="gone" >
-
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_weight="1"
+                        android:layout_weight="0.75"
                         android:orientation="vertical" >
 
                         <Spinner
@@ -498,10 +501,10 @@
                 android:layout_height="wrap_content"
                 android:background="#cfe2f3"
                 android:orientation="horizontal" >
-
+
                 <LinearLayout
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical" >
 
@@ -509,7 +512,7 @@
                         android:id="@+id/textViewHelpText1"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="The alcohol that you have inputted above, will be added together and converted below."
+                        android:text="The alcohol that you have inputted above, will be converted into the target unit below."
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
@@ -519,11 +522,11 @@
                         android:text="----------------------"
                         android:textAppearance="?android:attr/textAppearanceLarge" />
                 </LinearLayout>
-
+
                 <LinearLayout
                     android:id="@+id/AddRemoveFieldsButtons"
                     android:layout_width="wrap_content"
-                    android:layout_height="fill_parent"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical"
                     android:visibility="gone" >
@@ -555,19 +558,21 @@
                 android:layout_height="wrap_content"
                 android:background="#cfe2f3"
                 android:orientation="horizontal" >
-
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="0.75"
                     android:orientation="vertical" >
-
+
                     <TextView
                         android:id="@+id/TextView03"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="bottom"
                         android:text="Unit to convert into"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -575,13 +580,15 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical" >
-
+
                     <TextView
                         android:id="@+id/TextView01"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:gravity="bottom"
                         android:text="Alcohol content to convert into"
-                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -589,6 +596,15 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/textView1"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="bottom|center_horizontal"
+                        android:text="Answer"
+                        android:textAppearance="?android:attr/textAppearanceSmall" />
+
                 </LinearLayout>
             </LinearLayout>
 
@@ -597,11 +613,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="#fff2cc" >
-
+
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"
+                    android:layout_weight="0.75"
                     android:orientation="vertical" >
 
                     <Spinner
@@ -633,18 +649,18 @@
                         android:id="@+id/horizontalScrollView1"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent" >
-
+
                         <LinearLayout
-                            android:layout_width="match_parent"
+                            android:layout_width="wrap_content"
                             android:layout_height="match_parent"
+                            android:layout_gravity="center"
                             android:orientation="horizontal" >
-
+
                             <TextView
                                 android:id="@+id/alcoholIndicator"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
                                 android:gravity="center"
-                                android:text="text]"
                                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
                         </LinearLayout>
