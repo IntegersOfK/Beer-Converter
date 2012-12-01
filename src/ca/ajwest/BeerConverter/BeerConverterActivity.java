@@ -10,6 +10,7 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.nio.charset.Charset;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -1499,17 +1500,43 @@ public class BeerConverterActivity extends AbstractBillingActivity {
 	@Override
 	public void onRequestPurchaseResponse(String itemId, ResponseCode response) {
 		Log.i(LOGS, "onRequestPurchaseResponse - itemId: " + itemId + " ResponseCode: " + response);
-		plusVersion = true;
-		mAddRemoveFieldsButtons.setVisibility(LinearLayout.VISIBLE);
+
+		if (response.equals("RESULT_OK")){
+			plusVersion = true;
+			mAddRemoveFieldsButtons.setVisibility(LinearLayout.VISIBLE);
+		}
+		if (response.equals("RESULT_USER_CANCELED")){
+			Toast.makeText(getApplicationContext(), "Premium features wll always be avilable on any device, even after a wipe.", Toast.LENGTH_SHORT).show();
+		}
+		if (response.equals("RESULT_SERVICE_UNAVAILABLE")){
+			Toast.makeText(getApplicationContext(), "Looks like your connection is down.", Toast.LENGTH_SHORT).show();
+		}
+		if (response.equals("RESULT_BILLING_UNAVAILABLE")){
+			Toast.makeText(getApplicationContext(), "Looks like Billing isn't available to you for some reason. Premium features have been added for free!", Toast.LENGTH_SHORT).show();
+			mAddRemoveFieldsButtons.setVisibility(LinearLayout.VISIBLE);
+		}
+		if (response.equals("RESULT_ITEM_UNAVAILABLE")){
+			Toast.makeText(getApplicationContext(), "Something went wrong. Please report this to ajwest@gmail.com so it can be fixed.", Toast.LENGTH_SHORT).show();
+		}
+		if (response.equals("RESULT_DEVELOPER_ERROR")){
+			Toast.makeText(getApplicationContext(), "Something went wrong. Please report this to ajwest@gmail.com so it can be fixed.", Toast.LENGTH_SHORT).show();
+		}
+		if (response.equals("RESULT_ERROR")){
+			Toast.makeText(getApplicationContext(), "Something went wrong. Please report this to ajwest@gmail.com so it can be fixed.", Toast.LENGTH_SHORT).show();
+		}
 
 	}
 
 	//*end delete file/*
 	
+
+	double roundTwoDecimals(double d){
 	
-	double roundTwoDecimals(double d)
-	{
 	    DecimalFormat twoDForm = new DecimalFormat("#.##");
+	    DecimalFormatSymbols dfSymbols = new DecimalFormatSymbols(); 
+	    dfSymbols.setDecimalSeparator('.');//so that other languages will be forced to use . instead of ,
+	    twoDForm.setDecimalFormatSymbols(dfSymbols);  
+
 	    return Double.valueOf(twoDForm.format(d));
 	}
 
